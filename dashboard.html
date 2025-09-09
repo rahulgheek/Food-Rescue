@@ -53,7 +53,29 @@
         .dashboard-view {
             animation: fadeIn 0.5s ease-in-out;
         }
-
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 0.5rem;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            color: #111827;
+            font-size: 1rem;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1E392A;
+            box-shadow: 0 0 0 2px rgba(30, 57, 42, 0.2);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
@@ -105,7 +127,8 @@
                     <h1 class="text-3xl font-bold text-brand-green">Donor Dashboard</h1>
                     <p class="text-gray-600">Add and manage your food donations here.</p>
                 </div>
-                <button data-aos="fade-left" class="w-full md:w-auto px-6 py-3 bg-brand-accent-yellow text-brand-dark-green rounded-full font-bold hover:bg-opacity-90 transition-transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                <!-- Button to navigate to the Add Donation page -->
+                <button onclick="showAddDonation()" data-aos="fade-left" class="w-full md:w-auto px-6 py-3 bg-brand-accent-yellow text-brand-dark-green rounded-full font-bold hover:bg-opacity-90 transition-transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
                     <i class="fa-solid fa-plus-circle"></i> Add New Food Donation
                 </button>
             </div>
@@ -176,6 +199,79 @@
         </div>
         
         <!-- =================================================================== -->
+        <!-- ==                    ADD DONATION PAGE                          == -->
+        <!-- =================================================================== -->
+        <div id="add-donation-page" class="dashboard-view hidden">
+            <div class="mb-6" data-aos="fade-in">
+                <div class="flex items-center gap-4 mb-2">
+                    <button onclick="showDashboard('donor')" class="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h1 class="text-3xl font-bold text-brand-green">Add New Food Donation</h1>
+                </div>
+                <p class="text-gray-600">Fill out the form below to list your surplus food for rescue.</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-xl border border-gray-100" data-aos="fade-up">
+                <form id="donation-form" onsubmit="submitDonation(event)">
+                    <div class="form-group">
+                        <label for="title" class="form-label">Donation Title <span class="text-brand-accent-red">*</span></label>
+                        <input type="text" id="title" name="title" class="form-input" placeholder="e.g., Mixed Fresh Vegetables" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description" rows="4" class="form-textarea" placeholder="Provide details about the food, e.g., quantity, quality, packaging."></textarea>
+                    </div>
+
+                    <div class="form-group grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="category" class="form-label">Category</label>
+                            <select id="category" name="category" class="form-select">
+                                <option value="produce">Fresh Produce</option>
+                                <option value="prepared">Prepared Meals</option>
+                                <option value="bakery">Baked Goods</option>
+                                <option value="dairy">Dairy & Eggs</option>
+                                <option value="pantry">Pantry Items</option>
+                                <option value="meat">Meat & Fish</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="text" id="quantity" name="quantity" class="form-input" placeholder="e.g., 5 kg, 2 trays, 20 meals">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pickup-window" class="form-label">Pickup Window <span class="text-brand-accent-red">*</span></label>
+                        <input type="text" id="pickup-window" name="pickup-window" class="form-input" placeholder="e.g., Today, 4:00 PM - 6:00 PM" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image" class="form-label">Add a photo</label>
+                        <div class="flex items-center gap-4">
+                            <input type="file" id="image" name="image" class="form-input" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="form-group flex items-center justify-between mt-8">
+                        <button type="button" onclick="showDashboard('donor')" class="px-6 py-3 border-2 border-brand-green text-brand-green rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors">Cancel</button>
+                        <button type="submit" class="px-8 py-3 bg-brand-accent-yellow text-brand-dark-green rounded-full font-bold hover:bg-opacity-90 transition-transform hover:scale-105 shadow-lg">Submit Donation</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="donation-message" class="hidden fixed inset-0 z-[999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center">
+                    <i class="fa-solid fa-circle-check text-5xl text-brand-green mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Donation Added!</h3>
+                    <p class="text-gray-600 mb-6">Thank you for making a difference. Your donation will now be visible to local charities.</p>
+                    <button onclick="hideDonationMessage()" class="px-6 py-2 bg-brand-green text-white rounded-full font-bold hover:bg-brand-dark-green">Close</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- =================================================================== -->
         <!-- ==                       NGO DASHBOARD                           == -->
         <!-- =================================================================== -->
         <div id="ngo-dashboard" class="dashboard-view hidden">
@@ -223,19 +319,12 @@
                 <div class="space-y-6">
                     <div class="bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="100">
                         <h3 class="font-bold text-lg mb-4">Your Scheduled Pickups</h3>
-                        <div class="space-y-3">
-                            <div class="p-3 bg-gray-50 rounded-lg">
-                                <p class="font-semibold">Surplus Bakery Bread</p>
-                                <p class="text-sm text-gray-600">From: The Daily Grind Cafe</p>
-                                <p class="text-sm text-brand-green font-bold mt-1">Today, 4:00 PM - 6:00 PM</p>
-                            </div>
-                             <div class="p-3 bg-gray-50 rounded-lg">
-                                <p class="font-semibold">Canned Goods Donation</p>
-                                <p class="text-sm text-gray-600">From: SuperMart Grocers</p>
-                                <p class="text-sm text-brand-green font-bold mt-1">Tomorrow, 10:00 AM</p>
-                            </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <p class="font-semibold">Surplus Bakery Bread</p>
+                            <p class="text-sm text-gray-600">From: The Daily Grind Cafe</p>
+                            <p class="text-sm text-brand-green font-bold mt-1">Today, 4:00 PM - 6:00 PM</p>
                         </div>
-                        <a href="#" class="text-sm font-semibold text-brand-green hover:underline mt-4 block">View all pickups &rarr;</a>
+                         <a href="#" class="text-sm font-semibold text-brand-green hover:underline mt-4 block">View all pickups &rarr;</a>
                     </div>
                 </div>
             </div>
@@ -326,16 +415,19 @@
             ngo: document.getElementById('ngo-dashboard'),
             volunteer: document.getElementById('volunteer-dashboard')
         };
+        const addDonationPage = document.getElementById('add-donation-page');
         const switcherButtons = document.querySelectorAll('.role-switcher button');
+        const donationMessage = document.getElementById('donation-message');
         
         function showDashboard(role) {
             // A real app would get this 'role' after login.
             // For example: const userRole = '<?php echo $user->role; ?>';
             
-            // 1. Hide all dashboards
+            // 1. Hide all dashboards and the add donation page
             for (const key in dashboards) {
                 dashboards[key].classList.add('hidden');
             }
+            addDonationPage.classList.add('hidden');
             
             // 2. Show the correct dashboard
             if (dashboards[role]) {
@@ -357,6 +449,30 @@
             });
         }
         
+        function showAddDonation() {
+            // Hide all dashboards
+            for (const key in dashboards) {
+                dashboards[key].classList.add('hidden');
+            }
+            // Show the add donation page
+            addDonationPage.classList.remove('hidden');
+            AOS.refresh();
+        }
+
+        function submitDonation(event) {
+            event.preventDefault();
+            // In a real application, you would send this form data to a backend.
+            // For this example, we just show a success message.
+            donationMessage.classList.remove('hidden');
+        }
+
+        function hideDonationMessage() {
+            donationMessage.classList.add('hidden');
+            // Reset the form and navigate back to the dashboard
+            document.getElementById('donation-form').reset();
+            showDashboard('donor');
+        }
+
         // --- INITIALIZATION & ANIMATION LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize AOS
@@ -416,4 +532,3 @@
     </script>
 </body>
 </html>
-
